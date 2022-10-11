@@ -4,7 +4,7 @@ import { StyleSheet,
   StatusBar, Dimensions} from 'react-native';
 // useDimensions, 无论是否处于纵向模式我们能获取到屏幕正确的尺寸
 import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
-
+import { useState } from 'react';
 
 import WelcomeScreen from './app/screens/WelcomeScreen';
 import ViewImageScreen from './app/screens/ViewImageScreen';
@@ -27,8 +27,12 @@ export default function App() {
 
   const {landscape} = useDeviceOrientation()
 
+  const [isAddMode, setIsAddMode] = useState(false)
   return (
-    <GoalInput/>
+    <View style={styles.container}>
+      <Button title='Add New Goal' onPress={() => setIsAddMode(true)}/>
+      <GoalInput visible={isAddMode}/>
+    </View>
     /*
       SafeAreaView保留出顶部的刘海区域
     */
@@ -73,8 +77,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'skyblue',
-    // alignItems: 'center',
-    // justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
   }
 })

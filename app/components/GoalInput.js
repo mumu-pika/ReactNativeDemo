@@ -3,7 +3,7 @@
 */
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, Button, Modal } from 'react-native';
 
 
 import GoalItem from './GoalItem';
@@ -22,29 +22,39 @@ function GoalInput(props) {
     setCourseGoals(currentGoals => [...currentGoals, { id: Math.random().toString(), value: enteredGoal }])
   }
 
+  // 移除列表中的展示内容
+  const removeGoalHandler = goalId => {
+    setCourseGoals(currentGoals => {
+      return currentGoals.filter(goal => goal.id !== goalId)
+    })
+  }
+
+  // Modal组件可以用来覆盖包含React Native根视图的原生视图（如UIViewController，Activity），用它可以实现遮罩的效果
   return (
-    <View style={styles.screen}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder='Course Goal'
-          style={styles.input}
-          onChangeText={goalInputHandler}
-          value={enteredGoal}
-        />
-        <Button title="ADD" onPress={addGoalHandler} />
-      </View>
-      {/*
+    <Modal visible={props.visible} animationType="slide">
+      <View style={styles.screen}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder='Course Goal'
+            style={styles.input}
+            onChangeText={goalInputHandler}
+            value={enteredGoal}
+          />
+          <Button title="ADD" onPress={addGoalHandler} />
+        </View>
+        {/*
         FlatList有3个重要的属性：
           keyExtractor 指定捕获每个数据item的唯一的键值
           data 指向输入数据的数据属性
           renderItem 接收一个为每个项调用的函数
       */}
-      <FlatList
-        keyExtractor={(item, index) => item.id}
-        data={courseGoals}
-        renderItem={itemData => <GoalItem title={itemData.item.value} />}
-      />
-    </View>
+        <FlatList
+          keyExtractor={(item, index) => item.id}
+          data={courseGoals}
+          renderItem={itemData => <GoalItem id={itemData.item.id} onDelete={removeGoalHandler} title={itemData.item.value} />}
+        />
+      </View>
+    </Modal>
   );
 }
 
