@@ -1,11 +1,16 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, Button, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import {
+  View, Text, TextInput, StyleSheet,
+  Button, TouchableWithoutFeedback, Keyboard, Alert
+} from 'react-native'
 import { useState } from 'react';
 
 import Header from '../components/Header';
 import Card from '../components/Card';
 import colors from '../config/colors';
 import Input from '../components/Input';
+import NumberContainer from '../components/NumberContainer';
+
 
 function StartGameScreen(props) {
   // State
@@ -30,10 +35,16 @@ function StartGameScreen(props) {
     // output a messageBox to give user one final chance of changing his choice
 
     const chosenNumber = parseInt(enteredValue)
-    if (chosenNumber == NaN
+    // 如果输入的内容不符合要求
+    if (isNaN(chosenNumber)
       || chosenNumber <= 0
-      || chosenNumber > 99)
+      || chosenNumber > 99) {
+      Alert.alert("Invaild Input", "Number has to be a number between 1 and 99",
+        [{ text: 'Okay', style: "destructive", onPress: resetInputHandler }]
+      )
       return
+    }
+
 
     /*
       setEnteredValue will only be done in the next render cycle
@@ -46,12 +57,19 @@ function StartGameScreen(props) {
     setConfirmed(true)
     setEnteredValue("")
     setNumber(chosenNumber)
+    Keyboard.dismiss()
   }
 
-  // message to show
+  // message to show (开始游戏的消息卡片)
   let confirmedOutput
   if (confirmed) {
-    confirmedOutput = <Text>Chosen Number: {number}</Text>
+    confirmedOutput = (
+      <Card style={styles.summaryContainer}>
+        <Text>Chosen Number</Text>
+        <NumberContainer>{number}</NumberContainer>
+        <Button title="Start Game" onPress={() => props.onStartGame(number)} />
+      </Card>
+    )
   }
 
   return (
@@ -76,7 +94,7 @@ function StartGameScreen(props) {
             <View style={styles.button}>
               <Button title="Reset" color={colors.primary} onPress={resetInputHandler} />
             </View>
-            <View>
+            <View style={styles.button}>
               <Button title="Confirm" color={colors.secondary} onPress={confirmInputHandler} />
             </View>
           </View>
@@ -86,8 +104,6 @@ function StartGameScreen(props) {
     </TouchableWithoutFeedback>
   );
 }
-
-export default StartGameScreen;
 
 const styles = StyleSheet.create({
   screen: {
@@ -116,6 +132,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   button: {
-    width: 60
+    width: "40%"
+  },
+
+  // 输入数字提示并展示的区域
+  summaryContainer: {
+    marginTop: 20,
+    alignItems: "center"
   }
 })
+
+export default StartGameScreen;

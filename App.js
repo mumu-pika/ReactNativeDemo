@@ -8,8 +8,9 @@ import {
 import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
 import { useState } from 'react';
 
-import Header from './app/components/Header';
 import StartGameScreen from './app/screens/StartGameScreen';
+import GameScreen from './app/screens/GameScreen';
+import GameOverScreen from './app/screens/GameOverScreen';
 
 /* 
   The finished game will essentially have three different screens.
@@ -18,15 +19,42 @@ import StartGameScreen from './app/screens/StartGameScreen';
   One when the game is over
 */
 export default function App() {
+  // given a state to separate the different components
+  const [userNumber, setUserNumber]  = useState()
 
+  // the number of rounds it took the computer to finish the game
+  const [guessRounds, setGuessRounds] = useState(0)
+
+  // restart the game
+  const newGameHandler = () => {
+    setGuessRounds(0)
+    setUserNumber(null)
+  }
+
+
+  const startGameHandler = (selectedNumber) => {
+    setUserNumber(selectedNumber)
+    setGuessRounds(0)
+  }
+
+  const gameOverHandler = (numOfRounds) => {
+    setGuessRounds(numOfRounds)
+  }
+
+  let content = <StartGameScreen onStartGame={startGameHandler}/>
+  // 根据 guessRounds 判断 if game is running
+  if (userNumber && guessRounds <= 0) {
+    content = <GameScreen userChoice={userNumber} onGameOver={gameOverHandler} />
+  }
+  else if(guessRounds > 0) {
+    content = <GameOverScreen rounds={guessRounds} userNumber={userNumber} onRestart={newGameHandler}/>
+  }
   return (
     <View style={styles.screen}>
-      <StartGameScreen />
-      
+      {content}
     </View>
   );
 }
-
 
 /*
   StyleSheet可以验证其中的css样式属性, 可以规避掉像拼写错误的问题
