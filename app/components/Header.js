@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: colors.headerTitle,
-    fontSize: 20
+    fontSize: 26,
+    fontFamily: 'Lobster'
   },
-
 })
 
