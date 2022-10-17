@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 
 import NumberContainer from '../components/NumberContainer';
 import Card from '../components/Card';
-
+import MainButton from '../components/MainButton';
 
 // 生成一个指定范围内[min, max]的随机整数
 const generateRandomBetween = (min, max, exclude) => {
@@ -18,7 +19,7 @@ const generateRandomBetween = (min, max, exclude) => {
 }
 
 function GameScreen(props) {
-  const {userChoice, onGameOver} = props
+  const { userChoice, onGameOver } = props
   const [currentGuess, setCurrentGuess] = useState(generateRandomBetween(1, 100, props.userChoice))
   const [rounds, setRounds] = useState(0)
   // useRef allows us to define a value which survives component re-renders
@@ -38,8 +39,8 @@ function GameScreen(props) {
   // 猜数字高低
   const nextGuessHandler = direction => {
     // 如果用户的选择有误
-    if ((direction === 'lower' && currentGuess > userChoice)
-      || (direction === 'greater' && currentGuess < userChoice)
+    if ((direction === 'lower' && currentGuess < userChoice)
+      || (direction === 'greater' && currentGuess > userChoice)
     ) {
       Alert.alert('Don\'t lie!', 'You know that this is wrong...', [
         { text: 'Sorry！', style: 'cancel ' }
@@ -49,7 +50,7 @@ function GameScreen(props) {
 
     // 继续猜测
     // 重新划定范围
-    if (direction === 'lower') {
+    if (direction === 'greater') {
       currentLow.current = currentGuess
     }
     else {
@@ -67,8 +68,12 @@ function GameScreen(props) {
       <Text>Opponent's Guess</Text>
       <NumberContainer>{currentGuess}</NumberContainer>
       <Card style={styles.buttonContainer}>
-        <Button title='LOWER' onPress={nextGuessHandler.bind(this, 'lower')} />
-        <Button title='GREATER' onPress={nextGuessHandler.bind(this, 'greater')} />
+        <MainButton onPress={nextGuessHandler.bind(this, 'lower')}>
+          <Ionicons name="md-remove" size={26} color="white"></Ionicons>
+        </MainButton>
+        <MainButton title='GREATER' onPress={nextGuessHandler.bind(this, 'greater')}>
+          <Ionicons name="md-add" size={26} color="white"></Ionicons>
+        </MainButton>
       </Card>
     </View>
   );

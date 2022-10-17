@@ -6,13 +6,14 @@ import {
 } from 'react-native';
 // useDimensions, 无论是否处于纵向模式我们能获取到屏幕正确的尺寸
 import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as Font from 'expo-font'
 /*
   AppLoading is a component which will basically prolong the default loading screen
   It will prolong the screen to stay active until a certain task
 */
-import AppLoading from 'expo-app-loading'
+// import AppLoading from 'expo-app-loading'
+import * as SplashScreen from 'expo-splash-screen';
 
 import StartGameScreen from './app/screens/StartGameScreen';
 import GameScreen from './app/screens/GameScreen';
@@ -39,18 +40,39 @@ export default function App() {
   // the number of rounds it took the computer to finish the game
   const [guessRounds, setGuessRounds] = useState(0)
 
-  // dataLoad
-  const [dataLoaded, setDataLoaded] = useState(false)
+  // appIsReady
+  const [appIsReady, setAppIsReady] = useState(false)
 
-  if (!dataLoaded) {
-    return (
-      <AppLoading
-        startAsync={fetchFonts}
-        onFinish={() => setDataLoaded(true)}
-        onError={(err) => console.log(err) }
-      />
-    )
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // Pre-load fonts, make any API calls you need to do here
+        await fetchFonts()
+      } catch (e) {
+        console.warn(e)
+      } finally {
+        // Tell the application to render
+        setAppIsReady(true)
+      }
+    }
+    prepare()
+  }, [])
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setAppIsReady`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync()
+    }
+  }, [appIsReady])
+
+  if (!appIsReady) {
+    return null
   }
+
 
   // restart the game
   const newGameHandler = () => {
@@ -66,7 +88,7 @@ export default function App() {
 
   const gameOverHandler = (numOfRounds) => {
     setGuessRounds(numOfRounds)
-    setDataLoaded(false)
+    // setDataLoaded(false)
   }
 
   let content = <StartGameScreen onStartGame={startGameHandler} />
@@ -78,7 +100,9 @@ export default function App() {
     content = <GameOverScreen rounds={guessRounds} userNumber={userNumber} onRestart={newGameHandler} />
   }
   return (
-    <View style={styles.screen}>
+    <View
+    style={styles.screen}
+    onLayout={onLayoutRootView}>
       {content}
     </View>
   );
