@@ -15,6 +15,7 @@ import * as Font from 'expo-font'
 // import AppLoading from 'expo-app-loading'
 import * as SplashScreen from 'expo-splash-screen';
 
+import Header from './app/components/Header';
 import StartGameScreen from './app/screens/StartGameScreen';
 import GameScreen from './app/screens/GameScreen';
 import GameOverScreen from './app/screens/GameOverScreen';
@@ -103,6 +104,7 @@ export default function App() {
     <View
     style={styles.screen}
     onLayout={onLayoutRootView}>
+      <Header title="Guess a Number!" />
       {content}
     </View>
   );

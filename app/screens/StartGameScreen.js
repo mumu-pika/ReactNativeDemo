@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   View, Text, TextInput, StyleSheet,
-  Button, TouchableWithoutFeedback, Keyboard, Alert
+  Button, TouchableWithoutFeedback, Keyboard, Alert,
+  Dimensions, ScrollView, KeyboardAvoidingView
 } from 'react-native'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import Header from '../components/Header';
 import Card from '../components/Card';
 import colors from '../config/colors';
 import Input from '../components/Input';
@@ -17,6 +17,19 @@ function StartGameScreen(props) {
   const [enteredValue, setEnteredValue] = useState("")
   const [confirmed, setConfirmed] = useState(false)
   const [number, setNumber] = useState() // the number to start the game
+  const [buttonWidth, setButtonWidth] = useState(Dimensions.get('window').width / 4) // 对于屏幕横屏和竖屏, 按钮的宽度处理
+
+  useEffect(() => {
+    // 当屏幕翻转时候, 会引发屏幕尺寸的变化, 这个时候重新再设置一下合适尺寸
+    const updateLayout = () => {
+      setButtonWidth(Dimensions.get('window').width / 4)
+    }
+    // 监听尺寸发生变化的事件回调
+    Dimensions.addEventListener('change', updateLayout)
+    return () => {
+      Dimensions.removeEventListener('change', updateLayout)
+    }
+  }, [])
 
   // 输入内容
   const numberInputHandler = input => {
@@ -45,7 +58,6 @@ function StartGameScreen(props) {
       return
     }
 
-
     /*
       setEnteredValue will only be done in the next render cycle
       and not immediately after this line is executed, and setEnteredValue
@@ -67,7 +79,7 @@ function StartGameScreen(props) {
       <Card style={styles.summaryContainer}>
         <Text>Chosen Number</Text>
         <NumberContainer>{number}</NumberContainer>
-        <MainButton style={{backgroundColor: colors.orangeRed}} onPress={() => props.onStartGame(number)}>
+        <MainButton style={{ backgroundColor: colors.orangeRed }} onPress={() => props.onStartGame(number)}>
           Start Game!
         </MainButton>
       </Card>
@@ -75,35 +87,38 @@ function StartGameScreen(props) {
   }
 
   return (
-    // when a press happens, we want to dismiss the keyboard
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.screen}>
-        <Header title="Guess a Number!" />
-        <Text style={styles.title}>Start a New Game!</Text>
-        {/* <StartGameScreen></StartGameScreen> */}
-        <Card style={styles.inputContainer}>
-          <Text>Select a Number</Text>
-          <Input style={styles.input}
-            blurOnSubmit
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="numeric"
-            maxLength={2}
-            onChangeText={numberInputHandler}
-            value={enteredValue}
-          />
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button title="Reset" color={colors.primary} onPress={resetInputHandler} />
-            </View>
-            <View style={styles.button}>
-              <Button title="Confirm" color={colors.secondary} onPress={confirmInputHandler} />
-            </View>
+    <ScrollView>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
+        {/* when a press happens, we want to dismiss the keyboard */}
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View style={styles.screen}>
+            <Text style={styles.title}>Start a New Game!</Text>
+            {/* <StartGameScreen></StartGameScreen> */}
+            <Card style={styles.inputContainer}>
+              <Text>Select a Number</Text>
+              <Input style={styles.input}
+                blurOnSubmit
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="numeric"
+                maxLength={2}
+                onChangeText={numberInputHandler}
+                value={enteredValue}
+              />
+              <View style={styles.buttonContainer}>
+                <View style={{width: buttonWidth}}>
+                  <Button title="Reset" color={colors.primary} onPress={resetInputHandler} />
+                </View>
+                <View style={{width: buttonWidth}}>
+                  <Button title="Confirm" color={colors.secondary} onPress={confirmInputHandler} />
+                </View>
+              </View>
+            </Card>
+            {confirmedOutput}
           </View>
-        </Card>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 }
 
@@ -120,8 +135,10 @@ const styles = StyleSheet.create({
     marginVertical: 10
   },
   inputContainer: {
-    width: 300,
-    maxWidth: "80%",
+    width: "80%",
+    /* set up flexible rules */
+    maxWidth: "90%",
+    minWidth: 300,
     alignItems: "center",
   },
   input: {
@@ -134,9 +151,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20
   },
-  button: {
-    width: "40%"
-  },
+  // button: {
+  //   // width: "40%"
+  //   // this code down here is simply only runs once in our app lifecycle
+  //   width: Dimensions.get("window").width / 4
+  // },
 
   // 输入数字提示并展示的区域
   summaryContainer: {
