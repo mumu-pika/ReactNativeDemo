@@ -1,3 +1,4 @@
+// food Categories component
 import React from 'react';
 import {
   View,
@@ -5,10 +6,10 @@ import {
   StyleSheet
 } from 'react-native'
 
-function App(props) {
+function CategoriesScreen(props) {
   return (
-    <View style={styles.screen}>
-      <Text>hhhh</Text>
+    <View>
+      
     </View>
   );
 }
@@ -22,4 +23,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default App;
+export default CategoriesScreen;
