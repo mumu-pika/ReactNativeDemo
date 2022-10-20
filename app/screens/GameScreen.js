@@ -8,7 +8,10 @@ import { Ionicons } from '@expo/vector-icons'
 import NumberContainer from '../components/NumberContainer';
 import Card from '../components/Card';
 import MainButton from '../components/MainButton';
-import { ScreenOrientation } from 'expo';
+
+// it can be used for locking and unlocking the orientation at runtime
+import * as ScreenOrientation from 'expo-screen-orientation';
+
 
 // 生成一个指定范围内[min, max]的随机整数
 const generateRandomBetween = (min, max, exclude) => {
@@ -25,13 +28,17 @@ const generateRandomBetween = (min, max, exclude) => {
 // display the process of guess numbers
 const renderItems = (value, rounds) => (
   <View key={value} style={styles.listItem}>
-    <Text>#{rounds}</Text>
-    <Text>{value}</Text>
+    <Text style={styles.listText}>#{rounds}</Text>
+    <Text style={styles.listText}>{value}</Text>
   </View>
 )
 
 function GameScreen(props) {
-  ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+  // 设置为方向锁定
+  // ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+  ScreenOrientation.getOrientationLockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+
+
 
   // 每次渲染, initalGuess都会被重新创建, 但它实际上不会被使用, 因为useState初始化就执行一次
   const initialGuess = generateRandomBetween(1, 100, props.userChoice)
@@ -39,10 +46,30 @@ function GameScreen(props) {
   const [currentGuess, setCurrentGuess] = useState(initialGuess)
   const [rounds, setRounds] = useState(0) // 游戏回合数
   const [guessList, setGuessList] = useState([initialGuess]) // 记录每次猜测的结果
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState(
+    Dimensions.get('window').width
+  )
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(
+    Dimensions.get('window').height
+  )
+
+  // change the layout when the device screen rotation
+  useEffect(() => {
+    const updateLayout = () => {
+      setAvailableDeviceWidth(Dimensions.get('window').width)
+      setAvailableDeviceHeight(Dimensions.get('window').height)
+    }
+    Dimensions.addEventListener('change', updateLayout)
+    return () => {
+      Dimensions.removeEventListener('change', updateLayout)
+    }
+  })
+
   // useRef allows us to define a value which survives component re-renders
   // Initial boundaries 随机数的初始边界
   const currentLow = useRef(1)
   const currentHigh = useRef(100)
+
 
   useEffect(() => {
     // the function is executed after every render cycle
@@ -96,9 +123,9 @@ function GameScreen(props) {
       </Card>
       <View style={styles.listContainer}>
         {/* contentContainerStyle help to control the layout inside of that scroll view */}
-        {/* <ScrollView contentContainerStyle={styles.listContent}>
+        <ScrollView contentContainerStyle={styles.listContent}>
           {guessList.map((guess, index) => renderItems(guess, guessList.length - index))}
-        </ScrollView> */}
+        </ScrollView>
       </View>
     </View>
   );
@@ -130,12 +157,15 @@ const styles = StyleSheet.create({
   listItem: {
     borderColor: "#00acc1",
     borderWidth: 2,
-    padding: 10,
+    padding: 5,
     marginVertical: 10,
     backgroundColor: "white",
     flexDirection: "row",
     justifyContent: "space-around",
     width: "80%"
+  },
+  listText: {
+    fontSize: 20
   }
 })
 

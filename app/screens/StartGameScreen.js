@@ -10,7 +10,7 @@ import Card from '../components/Card';
 import colors from '../config/colors';
 import Input from '../components/Input';
 import NumberContainer from '../components/NumberContainer';
-import MainButton from '../components/MainButton';
+import MainButton from '../components/MainButton.android';
 
 function StartGameScreen(props) {
   // State

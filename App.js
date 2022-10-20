@@ -1,8 +1,16 @@
 // import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
-  Text, TextInput, View, SafeAreaView, Image, TouchableOpacity, Button, Platform,
-  StatusBar, Dimensions
+  Text,
+  TextInput,
+  View,
+  SafeAreaView,
+  Image,
+  TouchableOpacity,
+  Button,
+  Platform,
+  StatusBar,
+  Dimensions
 } from 'react-native';
 // useDimensions, 无论是否处于纵向模式我们能获取到屏幕正确的尺寸
 import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
@@ -101,12 +109,13 @@ export default function App() {
     content = <GameOverScreen rounds={guessRounds} userNumber={userNumber} onRestart={newGameHandler} />
   }
   return (
-    <View
-    style={styles.screen}
-    onLayout={onLayoutRootView}>
+    <SafeAreaView
+      style={styles.screen}
+      onLayout={onLayoutRootView}
+    >
       <Header title="Guess a Number!" />
       {content}
-    </View>
+    </SafeAreaView>
   );
 }
 
