@@ -8,8 +8,8 @@ import {
 
 function CategoriesScreen(props) {
   return (
-    <View>
-      
+    <View style={styles.screen}>
+      <Text>CategoriesScreen</Text>
     </View>
   );
 }
