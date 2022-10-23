@@ -7,6 +7,8 @@ import {
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
+import MealsNavigation from './app/navigation/MealsNavigation';
+
 // fetch local Fonts
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -51,13 +53,13 @@ function App(props) {
     <View
       style={styles.screen}
       onLayout={onLayoutRootView}>
-      <Text>hhhh</Text>
+      <MealsNavigation />
     </View>
   );
 }
 
 
-
+// 样式表
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
