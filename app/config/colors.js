@@ -3,7 +3,8 @@
 */
 
 export default {
-  primary: "#fc5c65",
-  secondary: "#4ecdc4",
+  primary: "#ffca28",
+  secondary: "#fc5c65",
+  thirdly: "#4ecdc4",
   black: "#000"
 }
