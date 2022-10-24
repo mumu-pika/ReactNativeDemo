@@ -1,15 +1,22 @@
 // The ingredients and detailed steps for this meal
-import React from 'react';
 import {
   View,
   Text,
-  StyleSheet
+  StyleSheet,
+  Button
 } from 'react-native'
 
 function MealDetailScreen(props) {
+  const navigation = props.navigation
+  const { popToTop } = navigation
   return (
     <View style={styles.screen}>
-      <Text>FavoritesScreen</Text>
+      <Text>MealDetailScreen</Text>
+      <Button
+        title="Go Back to Categories"
+        onPress={() => {
+          popToTop() // go back to root screen
+        }} />
     </View>
   );
 }

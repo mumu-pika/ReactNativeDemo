@@ -50,11 +50,12 @@ function App(props) {
   if (!appIsReady) return null
 
   return (
-    <View
-      style={styles.screen}
-      onLayout={onLayoutRootView}>
-      <MealsNavigation />
-    </View>
+    // <View
+    //   style={styles.screen}
+    //   onLayout={onLayoutRootView}>
+    //   <MealsNavigation />
+    // </View>
+    <MealsNavigation />
   );
 }
 
