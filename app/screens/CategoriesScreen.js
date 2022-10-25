@@ -11,25 +11,25 @@ import {
 
 // 引入分类数据
 import { CATEGORIES } from '../data/dummy-data';
+import CategoryGridTile from '../components/CategoryGridTile';
 
 function CategoriesScreen(props) {
   const navigation = props.navigation
   const { navigate } = navigation
 
-
+  // 渲染网格数据（菜单）
   const renderGridItem = (itemData) => {
     return (
-      <TouchableOpacity onPress={() => {
-        navigate('CategoryMeals', {
-          // 这里是params部分, route会自动包上params：{}
+      <CategoryGridTile
+        title={itemData.item.title}
+        color={itemData.item.color}
+        onSelect={() => {
+          navigate('CategoryMeals', {
+            // 这里是params部分, route会自动包上params：{}
             categoryId: itemData.item.id
-        })
-
-      }}>
-        <View style={styles.gridItem}>
-          <Text>{itemData.item.title}</Text>
-        </View>
-      </TouchableOpacity>
+          })
+        }}
+      />
     )
   }
   /* 下面是prop对象

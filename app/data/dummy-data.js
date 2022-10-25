@@ -1,4 +1,6 @@
 import Category from "../models/category";
+import Meal from "../models/meal";
+
 
 export const CATEGORIES = [
   new Category('c1', 'China','red'),
